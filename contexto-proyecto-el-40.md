@@ -107,6 +107,15 @@ El diseño debe permitir agregar más campos a `HouseRules` con el tiempo sin ro
 
 ## 5. Decisiones técnicas
 
+### Plataformas
+- **v1: solo web** (React en el navegador) — funciona en PC y celular sin instalar nada, es lo más rápido de tener jugable. Se puede convertir en PWA instalable más adelante sin rediseñar nada.
+- Apps nativas (React Native para iOS/Android) o Electron para desktop quedan como opción futura, no para la v1. El `rules-engine` es agnóstico de plataforma, así que no hay costo de re-trabajo en el motor de reglas si más adelante se suma un frontend nativo.
+
+### Modo offline (futuro, no v1)
+- Como el `rules-engine` no depende de red, puede correr directamente en el cliente (navegador) sin servidor — esto habilita, sin re-trabajo del motor, dos modos offline: **solo vs IA sin conexión** y **multijugador local (pasar y jugar) en el mismo dispositivo**. El principio server-authoritative solo aplica cuando hay múltiples humanos conectados por red que no confían entre sí; para estos modos locales no hace falta servidor.
+- El multijugador online y los torneos siguen requiriendo conexión por definición — no pueden ser offline.
+- Decisión: no es requisito para la v1 (foco inicial en el online), se suma más adelante ya que el diseño actual no necesita cambios para soportarlo cuando llegue el momento.
+
 ### Lenguaje / stack recomendado
 - **Backend + lógica del juego: Node.js + TypeScript**
   - El motor de reglas (mazo, turnos, validación de jugadas, puntaje, ruleset configurable) se escribe una sola vez como paquete/módulo compartido en TypeScript.
