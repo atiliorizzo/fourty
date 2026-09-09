@@ -28,7 +28,11 @@ El servidor siempre es la autoridad de la partida (server-authoritative). Cada "
 
 ### Jugadas posibles
 - **Caída**: cuando un jugador lanza una carta con el mismo número/figura que hay en la mesa, "le cae" y se la lleva.
-- **Caída con consecutivas**: si al caer hay cartas consecutivas disponibles en la mesa relacionadas a esa jugada, también se las lleva (ej: cae un 3 sobre otro 3 y se lleva también el 4 y el 5 si están en la mesa).
+- **Caída con consecutivas**: si al caer hay cartas consecutivas disponibles en la mesa relacionadas a esa jugada, también se las lleva (ej: cae un 3 sobre otro 3 y se lleva también el 4 y el 5 si están en la mesa). Reglas precisas confirmadas:
+  - El orden de la escalera es **A, 2, 3, 4, 5, 6, 7, J, Q, K** (10 posiciones — recordar que no hay 8, 9, 10 en juego, así que el 7 conecta directo con la J). El K es el techo, no da la vuelta al As.
+  - El barrido es **solo hacia arriba** desde la carta con la que se hizo la caída — las cartas de rango menor en la mesa no se tocan.
+  - El barrido **se corta apenas falta una carta** en la secuencia (sin saltos): si falta la siguiente, ahí termina, aunque haya cartas de rango mayor todavía disponibles más adelante en la mesa.
+  - Este mismo barrido hacia arriba **también aplica cuando se levanta por suma**, no es exclusivo de la caída por match exacto.
 - **Suma**: un jugador puede llevarse cartas de la mesa cuya suma sea igual al valor de una carta en su mano (ej: con un 5 se lleva un 2 y un 3, o un 4 y un As).
 - **Limpia**: cuando un jugador deja la mesa completamente vacía al llevarse todas las cartas que había. Puede darse por caída y limpia simultáneamente (no es acumulativo con caída, ver puntaje).
 - **Ronda**: cuando un jugador recibe 3 cartas del mismo número/figura en su mano repartida. Se debe reclamar antes de que cualquier jugador lance su primera carta.
@@ -157,5 +161,6 @@ Las fuentes no coinciden entre sí en varios puntos (ej. puntaje de doble ronda,
 - **Código ya iniciado** en `packages/rules-engine` (monorepo con npm workspaces, TypeScript, tests con Vitest):
   - `src/cards.ts`: modelo de `Suit`/`Rank`/`Card`, mazo completo (52), mazo de juego (40, sin perros), perros (12), shuffle.
   - `src/dealing.ts`: reparto de manos de 5 cartas por jugador (`dealMano`), y partición de un mazo completo en todas las manos de una data (`dealAllManos`), para 2 o 4 jugadores.
-  - 16 tests unitarios pasando.
-- **Pendiente de definir/implementar en el motor de reglas**: el ritual de "sacar carta más alta para determinar quién reparte" (falta definir el orden de rangos para esa comparación, no está especificado todavía), y luego la validación de jugadas (caída, suma, limpia, ronda, falla) sobre la mesa.
+  - `src/caida.ts`: validación de caída simple (match exacto de rango) y barrido de consecutivas hacia arriba (`resolveCaida`).
+  - 26 tests unitarios pasando.
+- **Pendiente de definir/implementar en el motor de reglas**: el ritual de "sacar carta más alta para determinar quién reparte" (se va a resolver más adelante con un sorteo simple, no bloquea nada), suma, limpia, ronda, falla, y cómo se combinan todas estas jugadas en el turno de un jugador.

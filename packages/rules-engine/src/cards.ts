@@ -29,6 +29,14 @@ export function sumValueOf(rank: Rank): number | undefined {
   return SUM_VALUE_BY_RANK[rank];
 }
 
+export function rankAfter(rank: Rank): Rank | undefined {
+  const index = PLAY_RANKS.indexOf(rank);
+  if (index === -1 || index === PLAY_RANKS.length - 1) {
+    return undefined;
+  }
+  return PLAY_RANKS[index + 1];
+}
+
 export function createFullDeck(): Card[] {
   return SUITS.flatMap((suit) => ALL_RANKS.map((rank) => ({ suit, rank })));
 }
