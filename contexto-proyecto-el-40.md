@@ -33,7 +33,12 @@ El servidor siempre es la autoridad de la partida (server-authoritative). Cada "
   - El barrido es **solo hacia arriba** desde la carta con la que se hizo la caída — las cartas de rango menor en la mesa no se tocan.
   - El barrido **se corta apenas falta una carta** en la secuencia (sin saltos): si falta la siguiente, ahí termina, aunque haya cartas de rango mayor todavía disponibles más adelante en la mesa.
   - Este mismo barrido hacia arriba **también aplica cuando se levanta por suma**, no es exclusivo de la caída por match exacto.
-- **Suma**: un jugador puede llevarse cartas de la mesa cuya suma sea igual al valor de una carta en su mano (ej: con un 5 se lleva un 2 y un 3, o un 4 y un As).
+- **Suma**: un jugador puede llevarse cartas de la mesa cuya suma sea igual al valor de una carta en su mano (ej: con un 5 se lleva un 2 y un 3, o un 4 y un As). Reglas precisas confirmadas:
+  - Normalmente son **exactamente 2 cartas** de la mesa las que se combinan.
+  - **Regla de casa (no confirmada como oficial, pero se incluye)**: se permite combinar **3 cartas**, pero solo si el resultado (incluyendo el barrido de consecutivas que sigue) deja la mesa completamente limpia. Ej: mesa tiene A,2,3,7,J y juego un 6 → sumo A+2+3=6, y por consecutivas me llevo también el 7 y la J, dejando la mesa limpia.
+  - Si hay varias combinaciones posibles en la mesa, el jugador **elige una sola** — no se llevan todas a la vez.
+  - Las figuras (J, Q, K) **nunca participan** de una suma, ni como la carta jugada ni como parte de la combinación de la mesa.
+  - El barrido de consecutivas hacia arriba (mismas reglas que en la caída) también se aplica después de una suma válida.
 - **Limpia**: cuando un jugador deja la mesa completamente vacía al llevarse todas las cartas que había. Puede darse por caída y limpia simultáneamente (no es acumulativo con caída, ver puntaje).
 - **Ronda**: cuando un jugador recibe 3 cartas del mismo número/figura en su mano repartida. Se debe reclamar antes de que cualquier jugador lance su primera carta.
 - **Doble ronda**: cuando un jugador recibe 4 cartas iguales en su mano repartida y las reclama como jugada (distinto de "recibir póker", ver victorias automáticas).
@@ -162,5 +167,7 @@ Las fuentes no coinciden entre sí en varios puntos (ej. puntaje de doble ronda,
   - `src/cards.ts`: modelo de `Suit`/`Rank`/`Card`, mazo completo (52), mazo de juego (40, sin perros), perros (12), shuffle.
   - `src/dealing.ts`: reparto de manos de 5 cartas por jugador (`dealMano`), y partición de un mazo completo en todas las manos de una data (`dealAllManos`), para 2 o 4 jugadores.
   - `src/caida.ts`: validación de caída simple (match exacto de rango) y barrido de consecutivas hacia arriba (`resolveCaida`).
-  - 26 tests unitarios pasando.
-- **Pendiente de definir/implementar en el motor de reglas**: el ritual de "sacar carta más alta para determinar quién reparte" (se va a resolver más adelante con un sorteo simple, no bloquea nada), suma, limpia, ronda, falla, y cómo se combinan todas estas jugadas en el turno de un jugador.
+  - `src/suma.ts`: validación de suma (2 cartas normalmente, 3 solo si limpia la mesa) con el mismo barrido de consecutivas (`resolveSuma`).
+  - `src/consecutiveSweep.ts`: lógica compartida del barrido de consecutivas, usada por caída y suma.
+  - 35 tests unitarios pasando.
+- **Pendiente de definir/implementar en el motor de reglas**: el ritual de "sacar carta más alta para determinar quién reparte" (se va a resolver más adelante con un sorteo simple, no bloquea nada), limpia, ronda, falla, y cómo se combinan todas estas jugadas en el turno de un jugador.

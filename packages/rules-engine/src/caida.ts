@@ -1,5 +1,5 @@
 import type { Card } from "./cards.js";
-import { rankAfter } from "./cards.js";
+import { sweepConsecutiveUpward } from "./consecutiveSweep.js";
 
 export interface CaidaResult {
   isCaida: boolean;
@@ -12,19 +12,8 @@ export function resolveCaida(playedCard: Card, tableCards: readonly Card[]): Cai
     return { isCaida: false, captured: [] };
   }
 
-  const captured = [...directMatches, playedCard];
-  let remainingTable = tableCards.filter((card) => !directMatches.includes(card));
+  const remainingTable = tableCards.filter((card) => !directMatches.includes(card));
+  const swept = sweepConsecutiveUpward(playedCard.rank, remainingTable);
 
-  let currentRank = playedCard.rank;
-  for (let nextRank = rankAfter(currentRank); nextRank; nextRank = rankAfter(currentRank)) {
-    const nextCard = remainingTable.find((card) => card.rank === nextRank);
-    if (!nextCard) {
-      break;
-    }
-    captured.push(nextCard);
-    remainingTable = remainingTable.filter((card) => card !== nextCard);
-    currentRank = nextRank;
-  }
-
-  return { isCaida: true, captured };
+  return { isCaida: true, captured: [...directMatches, playedCard, ...swept] };
 }
