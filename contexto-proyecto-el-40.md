@@ -40,8 +40,8 @@ El servidor siempre es la autoridad de la partida (server-authoritative). Cada "
   - Las figuras (J, Q, K) **nunca participan** de una suma, ni como la carta jugada ni como parte de la combinación de la mesa.
   - El barrido de consecutivas hacia arriba (mismas reglas que en la caída) también se aplica después de una suma válida.
 - **Limpia**: cuando un jugador deja la mesa completamente vacía al llevarse todas las cartas que había. Puede darse por caída y limpia simultáneamente (no es acumulativo con caída, ver puntaje).
-- **Ronda**: cuando un jugador recibe 3 cartas del mismo número/figura en su mano repartida. Se debe reclamar antes de que cualquier jugador lance su primera carta.
-- **Doble ronda**: cuando un jugador recibe 4 cartas iguales en su mano repartida y las reclama como jugada (distinto de "recibir póker", ver victorias automáticas).
+- **Ronda**: cuando un jugador recibe 3 cartas del mismo número/figura en su mano repartida. Se debe **cantar en voz alta** ("¡ronda!") antes de que cualquier jugador lance su primera carta de esa mano — si juega sin avisar, pierde el derecho a cobrarla.
+- **Doble ronda**: cuando un jugador recibe **4 cartas iguales** en su mano repartida (mismo evento que "recibir un póker" — no son reglas separadas, esto corrige una confusión anterior). También se debe cantar ("¡doble ronda!" o "¡cuatro por guapo!") antes de la primera carta jugada. El premio depende del reglamento (ver puntaje): 4 puntos en el reglamento oficial, o victoria automática en la variante de casa/barrio.
 - **Caída a una ronda**: cuando hay una ronda (3 cartas iguales) sobre la mesa y un jugador la completa lanzando la 4ta carta igual.
 - **Falla**: cuando una pareja no logra levantar ninguna carta durante toda la "data" (ronda de reparto completa); el equipo rival puede reclamar puntos.
 
@@ -49,8 +49,8 @@ El servidor siempre es la autoridad de la partida (server-authoritative). Cada "
 - Caída = **2 puntos**
 - Limpia = **2 puntos**
 - Caída y limpia simultánea = **2 puntos** (NO acumulativo — no suma 4)
-- Ronda (3 iguales) = **2 puntos**
-- Doble ronda (4 iguales, reclamada como jugada) = **8 puntos**
+- Ronda (3 iguales, cantada antes de la primera carta) = **2 puntos**
+- Doble ronda (4 iguales, cantada antes de la primera carta) = **4 puntos** en el reglamento oficial ("Mundial de Cuarenta"), o **victoria automática de la chica** en la variante de casa/barrio (también llamada "flor" o "póquer") — es un mismo evento con dos resoluciones posibles según el `HouseRules` activo, ya NO es "8 puntos" como se había definido antes.
 - Caída a una ronda = **4 puntos**
 - Falla = **2 puntos**
 - Los puntos se acumulan usando los "perros" (8, 9, 10) reservados al inicio: cada perro puesto boca arriba vale 2 puntos; puesto boca abajo (volteado), representa 10 puntos.
@@ -60,7 +60,7 @@ El servidor siempre es la autoridad de la partida (server-authoritative). Cada "
 - El "juego completo" se gana al mejor de 3 partidas ("chicas").
 
 ### Victorias automáticas (cierran la chica al instante, sin seguir contando puntos)
-- Recibir **póker** (4 cartas iguales) en el reparto inicial — distinto de la "doble ronda" (que se reclama como jugada y da 8 puntos); ambas reglas coexisten.
+- **Doble ronda** (4 cartas iguales al repartir), únicamente si el `HouseRules` activo usa la variante de casa/barrio en vez del reglamento oficial de 4 puntos (ver puntaje arriba — es el mismo evento, no una regla aparte).
 - Lograr **4 caídas consecutivas** (2 por jugador de la pareja).
 - Acumular **más de 15 puntos de cartón**.
 
@@ -128,6 +128,9 @@ El diseño debe permitir agregar más campos a `HouseRules` con el tiempo sin ro
 - El multijugador online y los torneos siguen requiriendo conexión por definición — no pueden ser offline.
 - Decisión: no es requisito para la v1 (foco inicial en el online), se suma más adelante ya que el diseño actual no necesita cambios para soportarlo cuando llegue el momento.
 
+### Convención de código
+Todo el código fuente (identificadores, comentarios, nombres de tests) se escribe en **inglés**. La única excepción son los términos específicos del juego sin traducción natural o que son parte de su identidad cultural: `caída`, `suma`, `limpia`, `ronda`, `falla`, `perro`, `cartón`, `chica`, `dicho`, `Juez de Aguas`. Todo lo demás (nombres de funciones, tipos, variables, mensajes de error, descripciones de test) va en inglés.
+
 ### Lenguaje / stack recomendado
 - **Backend + lógica del juego: Node.js + TypeScript**
   - El motor de reglas (mazo, turnos, validación de jugadas, puntaje, ruleset configurable) se escribe una sola vez como paquete/módulo compartido en TypeScript.
@@ -169,5 +172,7 @@ Las fuentes no coinciden entre sí en varios puntos (ej. puntaje de doble ronda,
   - `src/caida.ts`: validación de caída simple (match exacto de rango) y barrido de consecutivas hacia arriba (`resolveCaida`).
   - `src/suma.ts`: validación de suma (2 cartas normalmente, 3 solo si limpia la mesa) con el mismo barrido de consecutivas (`resolveSuma`).
   - `src/consecutiveSweep.ts`: lógica compartida del barrido de consecutivas, usada por caída y suma.
-  - 35 tests unitarios pasando.
-- **Pendiente de definir/implementar en el motor de reglas**: el ritual de "sacar carta más alta para determinar quién reparte" (se va a resolver más adelante con un sorteo simple, no bloquea nada), limpia, ronda, falla, y cómo se combinan todas estas jugadas en el turno de un jugador.
+  - `src/ronda.ts`: detección de ronda/doble ronda en una mano repartida (`detectRonda`) — solo detecta el patrón, el puntaje/resolución (2 pts, 4 pts, o victoria automática) queda para la capa de orquestación que use el `HouseRules`.
+  - `src/limpia.ts`: chequeo de si una jugada dejó la mesa vacía (`isLimpia`), reutilizable para cualquier tipo de captura (caída, suma, etc).
+  - 42 tests unitarios pasando. Código en inglés desde este punto (ver convención arriba); los primeros módulos (`cards.ts`, `dealing.ts`, `caida.ts`, `suma.ts`) ya estaban mayormente en inglés salvo algunos nombres de test que se corrigieron.
+- **Pendiente de definir/implementar en el motor de reglas**: el ritual de "sacar carta más alta para determinar quién reparte" (se va a resolver más adelante con un sorteo simple, no bloquea nada), falla, y el turno/orquestador de estado que combine todas estas jugadas (mano, mesa, pilas de cartón por equipo, aplicación del `HouseRules`).

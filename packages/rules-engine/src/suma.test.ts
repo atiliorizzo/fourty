@@ -4,8 +4,8 @@ import { resolveSuma } from "./suma.js";
 
 const card = (rank: Card["rank"], suit: Card["suit"] = "hearts"): Card => ({ rank, suit });
 
-describe("resolveSuma — caso básico de 2 cartas", () => {
-  it("captura 2 cartas de la mesa que suman el valor de la carta jugada", () => {
+describe("resolveSuma — basic 2-card case", () => {
+  it("captures 2 table cards that add up to the played card's value", () => {
     const two = card("2");
     const three = card("3");
     const king = card("K");
@@ -18,7 +18,7 @@ describe("resolveSuma — caso básico de 2 cartas", () => {
     expect(result.captured).toEqual([two, three, played]);
   });
 
-  it("rechaza la combinación si la suma no da el valor exacto", () => {
+  it("rejects the combination if the sum doesn't match exactly", () => {
     const two = card("2");
     const three = card("3");
     const table = [two, three];
@@ -30,7 +30,7 @@ describe("resolveSuma — caso básico de 2 cartas", () => {
     expect(result.captured).toEqual([]);
   });
 
-  it("rechaza si alguna carta seleccionada no está realmente en la mesa", () => {
+  it("rejects if a selected card isn't actually on the table", () => {
     const two = card("2");
     const three = card("3");
     const notOnTable = card("4");
@@ -40,7 +40,7 @@ describe("resolveSuma — caso básico de 2 cartas", () => {
     expect(result.isValidSuma).toBe(false);
   });
 
-  it("rechaza si se intenta usar una figura (J/Q/K) dentro de la combinación", () => {
+  it("rejects if a face card (J/Q/K) is part of the combination", () => {
     const jack = card("J");
     const two = card("2");
     const table = [jack, two];
@@ -49,7 +49,7 @@ describe("resolveSuma — caso básico de 2 cartas", () => {
     expect(result.isValidSuma).toBe(false);
   });
 
-  it("rechaza si la carta jugada es una figura (J/Q/K) — nunca suman", () => {
+  it("rejects if the played card is a face card (J/Q/K) — they never sum", () => {
     const two = card("2");
     const three = card("3");
     const table = [two, three];
@@ -58,7 +58,7 @@ describe("resolveSuma — caso básico de 2 cartas", () => {
     expect(result.isValidSuma).toBe(false);
   });
 
-  it("también arrastra el barrido de consecutivas después de la suma", () => {
+  it("also carries the consecutive sweep after the suma", () => {
     const two = card("2");
     const three = card("3");
     const six = card("6");
@@ -73,8 +73,8 @@ describe("resolveSuma — caso básico de 2 cartas", () => {
   });
 });
 
-describe("resolveSuma — combinación especial de 3 cartas", () => {
-  it("permite sumar 3 cartas si el resultado (con barrido incluido) deja la mesa limpia", () => {
+describe("resolveSuma — special 3-card combination", () => {
+  it("allows summing 3 cards if the result (sweep included) leaves the table clean", () => {
     const ace = card("A");
     const two = card("2");
     const three = card("3");
@@ -89,7 +89,7 @@ describe("resolveSuma — combinación especial de 3 cartas", () => {
     expect(result.captured).toEqual([ace, two, three, played, seven, jack]);
   });
 
-  it("rechaza la combinación de 3 cartas si la mesa NO queda limpia", () => {
+  it("rejects the 3-card combination if the table does NOT end up clean", () => {
     const ace = card("A");
     const two = card("2");
     const three = card("3");
@@ -102,7 +102,7 @@ describe("resolveSuma — combinación especial de 3 cartas", () => {
     expect(result.isValidSuma).toBe(false);
   });
 
-  it("rechaza la combinación de 3 cartas si la regla de casa la desactiva, aunque limpiaría la mesa", () => {
+  it("rejects the 3-card combination if the house rule disables it, even if it would clean the table", () => {
     const ace = card("A");
     const two = card("2");
     const three = card("3");

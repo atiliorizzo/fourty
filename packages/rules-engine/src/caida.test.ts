@@ -41,7 +41,7 @@ describe("resolveCaida", () => {
   });
 });
 
-describe("resolveCaida — barrido de consecutivas", () => {
+describe("resolveCaida — consecutive sweep", () => {
   it("sweeps consecutive ranks upward (5,6,7,J,Q,K playing a 6 leaves only the 5)", () => {
     const table = [card("5"), card("6"), card("7"), card("J"), card("Q"), card("K")];
     const result = resolveCaida(card("6", "spades"), table);

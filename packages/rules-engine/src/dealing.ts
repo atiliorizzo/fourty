@@ -4,15 +4,15 @@ export type PlayerCount = 2 | 4;
 
 export const CARDS_PER_HAND = 5;
 
-export interface DealtMano {
+export interface DealtHand {
   hands: Card[][];
   remainingDeck: Card[];
 }
 
-export function dealMano(deck: readonly Card[], numPlayers: PlayerCount): DealtMano {
+export function dealHand(deck: readonly Card[], numPlayers: PlayerCount): DealtHand {
   const cardsNeeded = CARDS_PER_HAND * numPlayers;
   if (deck.length < cardsNeeded) {
-    throw new Error(`No hay suficientes cartas para repartir: se necesitan ${cardsNeeded}, quedan ${deck.length}`);
+    throw new Error(`Not enough cards to deal: need ${cardsNeeded}, only ${deck.length} left`);
   }
 
   const hands: Card[][] = Array.from({ length: numPlayers }, () => []);
@@ -25,20 +25,20 @@ export function dealMano(deck: readonly Card[], numPlayers: PlayerCount): DealtM
   return { hands, remainingDeck: deck.slice(cardsNeeded) };
 }
 
-export function dealAllManos(deck: readonly Card[], numPlayers: PlayerCount): Card[][][] {
-  const cardsPerMano = CARDS_PER_HAND * numPlayers;
-  if (deck.length % cardsPerMano !== 0) {
+export function dealAllHands(deck: readonly Card[], numPlayers: PlayerCount): Card[][][] {
+  const cardsPerDeal = CARDS_PER_HAND * numPlayers;
+  if (deck.length % cardsPerDeal !== 0) {
     throw new Error(
-      `El mazo (${deck.length} cartas) no se reparte exacto entre ${numPlayers} jugadores de a ${CARDS_PER_HAND} cartas por mano`
+      `The deck (${deck.length} cards) does not split evenly across ${numPlayers} players at ${CARDS_PER_HAND} cards each`
     );
   }
 
-  const manos: Card[][][] = [];
+  const deals: Card[][][] = [];
   let remaining: readonly Card[] = deck;
   while (remaining.length > 0) {
-    const { hands, remainingDeck } = dealMano(remaining, numPlayers);
-    manos.push(hands);
+    const { hands, remainingDeck } = dealHand(remaining, numPlayers);
+    deals.push(hands);
     remaining = remainingDeck;
   }
-  return manos;
+  return deals;
 }

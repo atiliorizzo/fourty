@@ -3,7 +3,7 @@ import { sumValueOf } from "./cards.js";
 import { sweepConsecutiveUpward } from "./consecutiveSweep.js";
 
 export interface SumaOptions {
-  /** Regla de casa: permite combinar 3 cartas de la mesa en vez de 2, pero solo si el resultado deja la mesa limpia. */
+  /** House rule: allows combining 3 table cards instead of 2, but only if the result leaves the table clean (limpia). */
   allowThreeCardSumForLimpia?: boolean;
 }
 
