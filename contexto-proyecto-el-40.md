@@ -22,6 +22,9 @@ El servidor siempre es la autoridad de la partida (server-authoritative). Cada "
 - Para determinar quién reparte: cada jugador saca una carta del mazo; la carta más alta empieza barajando.
 - El jugador que sacó la carta más alta entrega el mazo a su oponente de la izquierda para "partir" el mazo, y luego reparte 5 cartas a cada jugador, repartiendo hacia la derecha.
 - Empieza lanzando carta el jugador a la derecha del repartidor.
+- **La mesa arranca vacía** — no se reparten cartas a la mesa al inicio de la data, solo a las manos de los jugadores.
+- Dentro de una misma "data", cuando los jugadores gastan las 5 cartas de su mano, el repartidor reparte otras 5 a cada uno del mazo restante (sin tocar la mesa), y así sucesivamente hasta agotar el mazo de 40 cartas. Con 2 jugadores son 4 repartos de 5; con 4 jugadores son 2 repartos de 5.
+- Al terminar la data (se acaba el mazo y las manos), si quedan cartas sueltas en la mesa que nadie levantó, se las lleva el equipo que hizo la última jugada/captura (afecta el conteo de cartón, pero no dispara puntos de "limpia" — la limpia es una jugada activa del jugador durante el juego, no un barrido automático de fin de data).
 
 ### Jugadas posibles
 - **Caída**: cuando un jugador lanza una carta con el mismo número/figura que hay en la mesa, "le cae" y se la lleva.
@@ -149,7 +152,10 @@ Se contrastó este documento contra varias fuentes públicas para verificar punt
 Las fuentes no coinciden entre sí en varios puntos (ej. puntaje de doble ronda, puntaje de mal reparto) — es consistente con que el juego varía por región/familia. Las decisiones finales tomadas en este documento son las que Atilio confirmó como la versión que quiere implementar, no necesariamente "la" versión oficial única (no existe tal cosa).
 
 ## 7. Estado actual del proyecto
-- Etapa de diseño/planificación técnica, aún no se ha empezado a programar.
 - Reglas del juego, Juez de Aguas, dichos, torneos y ruleset configurable ya definidos (este documento).
 - Repo creado: github.com/atiliorizzo/fourty (rama `main` estable, rama `dev` para trabajo diario).
-- **Próximo paso acordado**: empezar por `packages/rules-engine` (mazo, reparto, validación de jugadas) con tests unitarios, antes de tocar servidor/red.
+- **Código ya iniciado** en `packages/rules-engine` (monorepo con npm workspaces, TypeScript, tests con Vitest):
+  - `src/cards.ts`: modelo de `Suit`/`Rank`/`Card`, mazo completo (52), mazo de juego (40, sin perros), perros (12), shuffle.
+  - `src/dealing.ts`: reparto de manos de 5 cartas por jugador (`dealMano`), y partición de un mazo completo en todas las manos de una data (`dealAllManos`), para 2 o 4 jugadores.
+  - 16 tests unitarios pasando.
+- **Pendiente de definir/implementar en el motor de reglas**: el ritual de "sacar carta más alta para determinar quién reparte" (falta definir el orden de rangos para esa comparación, no está especificado todavía), y luego la validación de jugadas (caída, suma, limpia, ronda, falla) sobre la mesa.
